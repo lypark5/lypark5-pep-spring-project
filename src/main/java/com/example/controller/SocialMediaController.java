@@ -11,7 +11,6 @@ import com.example.exception.DuplicateAccountException;
 import com.example.service.AccountService;
 // import com.example.service.MessageService;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 
@@ -52,13 +51,18 @@ public class SocialMediaController {
             return ResponseEntity.badRequest().body(null);
         }
     }    
+ 
 
-
-    // @PostMapping("/login")
-    // public ResponseEntity<Void> login(@RequestBody Account account) throws AuthenticationException {
-    //     accountService.login(account.getUsername(), account.getPassword());
+    @PostMapping("/login")
+    public ResponseEntity<Account> login(@RequestBody Account account) {
+        try {
+            Account resAccount = accountService.login(account.getUsername(), account.getPassword());
+            return ResponseEntity.ok().body(resAccount);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
         
-    // }
+    }
 
 
 }
