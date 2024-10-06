@@ -45,13 +45,13 @@ public class SocialMediaController {
             // try creating the acct, if successful, we'll get the resulting acct.
             Account newAccount = accountService.addAccount(account);
             return ResponseEntity.ok(newAccount);
+        } catch (DuplicateAccountException e) {         // custom named exception, more specific so comes first
+            // return ResponseEntity.conflict().body(null);     // no such .conflict() direct method exists
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
-        } catch (DuplicateAccountException e) {         // custom named exception
-            // return ResponseEntity.conflict().body(null);     // no such .conflict() direct method
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
-    }
+    }    
 
 
     // @PostMapping("/login")
