@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+
+
 @Service
 public class AccountService {
     private AccountRepository accountRepository;
@@ -17,7 +19,7 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    // creating account
+    // CREATING ACCOUNT
     public Account addAccount(Account account) {
         // validate fields first
         validateAccount(account);
@@ -26,7 +28,7 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    // login
+    // LOGIN
     public Account login(String username, String password) {
         // finding account first
         Optional<Account> optionalAccount = accountRepository.findByUsername(username);
@@ -39,7 +41,7 @@ public class AccountService {
         }
     }
 
-    // validate account
+    // VALIDATE ACCOUNT
     private void validateAccount(Account account) {
         // check if username is null, but also if empty string.
         if (account.getUsername() == null || account.getUsername().trim().isEmpty()) {

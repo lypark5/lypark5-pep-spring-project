@@ -10,11 +10,14 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Integer> {
-    List<Message> findAll();
-    Optional<Message> findById(Integer messageId);
-    List<Message> existsByPostedBy(Integer postedBy);
+  List<Message> findAll();
+  Optional<Message> findById(Integer messageId);
+  boolean existsById(Integer messageId);     // for delete
+  List<Message> findByPostedBy(Integer postedBy);   // find all messages by user(postedBy)
 }
 
-// "boolean existsById(Integer messsageId);" is unnecessary cuz we got Optional to handle null.
-// JpaRepository already includes .save() for create and update, no need to write it.
-// it also already includes .delete(), no need to write it.
+// better to use Integer in this layer, standard practice in JPA, allows nullable.
+// boolean existsByPostedBy(Integer postedBy);  
+  // this is too complicated, just use existsByAccountId in AccountRepo in
+// JpaRepository already includes .save() for create and update, so we don't need to write it.
+// it also already includes .delete() so we don't need to write it.
