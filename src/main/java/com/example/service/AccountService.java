@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.entity.Account;
+import com.example.exception.DuplicateAccountException;
 import com.example.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AccountService {
 
         // check if username exists using repo
         if (accountRepository.existsByUsername(account.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new DuplicateAccountException("Username already exists");
         }
     }
 }
