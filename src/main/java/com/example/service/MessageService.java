@@ -22,10 +22,12 @@ public class MessageService {
         this.accountRepository = accountRepository;
     }
 
+
     // GET ALL MESSAGES
     public List<Message> getAllMessages() {
         return messageRepository.findAll();
     }
+
 
     // GET MESSAGE BY ID
     public Message getMessageById(int messageId) {
@@ -36,14 +38,10 @@ public class MessageService {
         if (optionalMessage.isPresent()) {
             return optionalMessage.get();
         } else {
-            throw new IllegalArgumentException("Invalid messageId");
+            return null;
         }
     }
 
-    // GET MESSAGES OF USER
-    public List<Message> getMessagesOfUser(int postedBy) {
-        return messageRepository.findByPostedBy(postedBy);
-    }
 
     // VALIDATE MESSAGE
     private void validateMessage(Message message) {
@@ -56,24 +54,26 @@ public class MessageService {
         if (message.getMessageText().length() > 255) {
             throw new IllegalArgumentException("Message Text cannot be more than 255 characters long");
         }
-
-        // check if postedBy is nonexistent (use method from AccountRepo)
-        if (accountRepository.existsByAccountId(message.getPostedBy())) {
-            throw new IllegalArgumentException("This user does not exist");
-        }
     }
+
 
     // CREATE MESSAGE
     public Message addMessage(Message newMessage) {
         // validate fields first
         validateMessage(newMessage);
 
+        // check if postedBy is nonexistent (use method from AccountRepo), third validation not included in validation method
+        if (!accountRepository.existsByAccountId(newMessage.getPostedBy())) {
+            throw new IllegalArgumentException("This user does not exist");
+        }
+
         // then create
         return messageRepository.save(newMessage);
     }
 
+
     // UPDATE MESSAGE
-    public Message updateMessage(int messageId, Message updatedMessage) {
+    public Integer updateMessage(int messageId, Message updatedMessage) {
         // validate updatedMessage
         validateMessage(updatedMessage);
 
@@ -84,16 +84,15 @@ public class MessageService {
         if (optionalMessage.isPresent()) {
             //convert Optional type to Message object
             Message chosenMessage = optionalMessage.get();
-
-            chosenMessage.setMessageText(updatedMessage.getMessageText());          // updatable
-            chosenMessage.setTimePostedEpoch(updatedMessage.getTimePostedEpoch());  // updatable
-
-            return messageRepository.save(chosenMessage);       // updates and returns updated original message
+            chosenMessage.setMessageText(updatedMessage.getMessageText());          
+            messageRepository.save(chosenMessage);       // needs to be chosenMessage cuz it is Message type, optionalMessage is Optional type.
+            return 1;
         } else {
             throw new IllegalArgumentException("Invalid messageId");
         }
     }
 
+    
     // DELETE MESSAGE
     public Integer deleteMessage(int messageId) {       // Integer includes null
         if (messageRepository.existsById(messageId)) {

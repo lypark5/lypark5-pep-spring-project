@@ -1,23 +1,29 @@
 package com.example.service;
 
 import com.example.entity.Account;
+import com.example.entity.Message;
 import com.example.exception.DuplicateAccountException;
 import com.example.repository.AccountRepository;
+import com.example.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.List;
 
 
 
 @Service
 public class AccountService {
     private AccountRepository accountRepository;
+    private MessageRepository messageRepository;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository, MessageRepository messageRepository) {
         this.accountRepository = accountRepository;
+        this.messageRepository = messageRepository;
     }
+
 
     // CREATING ACCOUNT
     public Account addAccount(Account account) {
@@ -27,6 +33,7 @@ public class AccountService {
         // then create
         return accountRepository.save(account);
     }
+
 
     // LOGIN
     public Account login(String username, String password) {
@@ -40,6 +47,7 @@ public class AccountService {
             throw new IllegalArgumentException("Invalid username or password");
         }
     }
+
 
     // VALIDATE ACCOUNT
     private void validateAccount(Account account) {
@@ -57,5 +65,11 @@ public class AccountService {
         if (accountRepository.existsByUsername(account.getUsername())) {
             throw new DuplicateAccountException("Username already exists");
         }
+    }
+
+
+    // GET MESSAGES OF USER                                     // no need to import Message entity, since no manipulation
+    public List<Message> getMessagesOfUser(int accountId) {
+        return messageRepository.findByPostedBy(accountId);     // using messageRepo method
     }
 }
